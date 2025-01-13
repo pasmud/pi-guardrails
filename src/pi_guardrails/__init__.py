@@ -28,3 +28,5 @@ __all__ = [
     "Violation",
     "load_policy",
 ]
+
+__version__ = "0.1.0"
