@@ -41,3 +41,20 @@ def build_parser() -> argparse.ArgumentParser:
         default="json",
         help="Output format (default: json).",
     )
+    check.add_argument(
+        "--fail-on-deny",
+        action="store_true",
+        help="Exit with code 2 if any call is denied or requires approval.",
+    )
+
+    validate = subparsers.add_parser(
+        "validate-policy",
+        help="Validate a policy file and report normalized policy details.",
+    )
+    validate.add_argument("--policy", required=True, help="Path to policy JSON file.")
+    validate.add_argument(
+        "--format",
+        choices=["json", "text"],
+        default="json",
+        help="Output format (default: json).",
+    )
