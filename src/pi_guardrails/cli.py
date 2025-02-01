@@ -82,3 +82,10 @@ def main(argv: list[str] | None = None) -> int:
     except OSError as exc:
         _emit_error(str(exc), getattr(args, "format", "json"))
         return 2
+
+
+def _cmd_check(args: argparse.Namespace) -> int:
+    policy = load_policy(Path(args.policy))
+    calls = _load_calls(Path(args.calls))
+    engine = GuardrailEngine(policy)
+    report = engine.evaluate_many(calls)
