@@ -58,3 +58,27 @@ def build_parser() -> argparse.ArgumentParser:
         default="json",
         help="Output format (default: json).",
     )
+
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    try:
+        if args.command == "check":
+            return _cmd_check(args)
+        if args.command == "validate-policy":
+            return _cmd_validate_policy(args)
+        parser.error(f"unknown command: {args.command}")
+        return 2
+    except PolicyError as exc:
+        _emit_error(str(exc), getattr(args, "format", "json"))
+        return 2
+    except ValueError as exc:
+        _emit_error(str(exc), getattr(args, "format", "json"))
+        return 2
+    except OSError as exc:
+        _emit_error(str(exc), getattr(args, "format", "json"))
+        return 2
