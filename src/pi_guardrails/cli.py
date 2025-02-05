@@ -89,3 +89,14 @@ def _cmd_check(args: argparse.Namespace) -> int:
     calls = _load_calls(Path(args.calls))
     engine = GuardrailEngine(policy)
     report = engine.evaluate_many(calls)
+
+    payload = report.to_dict()
+    if args.format == "json":
+        json.dump(payload, sys.stdout, indent=2, sort_keys=True)
+        sys.stdout.write("\n")
+    else:
+        sys.stdout.write(_format_text_report(payload))
+
+    has_block = report.denied_count > 0 or report.approval_count > 0
+    if args.fail_on_deny and has_block:
+        return 2
