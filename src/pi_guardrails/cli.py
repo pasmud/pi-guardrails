@@ -100,3 +100,21 @@ def _cmd_check(args: argparse.Namespace) -> int:
     has_block = report.denied_count > 0 or report.approval_count > 0
     if args.fail_on_deny and has_block:
         return 2
+    return 0
+
+
+def _cmd_validate_policy(args: argparse.Namespace) -> int:
+    policy = load_policy(Path(args.policy))
+    payload = {
+        "ok": True,
+        "policy": policy.to_dict(),
+        "rules": len(policy.rules),
+    }
+    if args.format == "json":
+        json.dump(payload, sys.stdout, indent=2, sort_keys=True)
+        sys.stdout.write("\n")
+    else:
+        sys.stdout.write(
+            f"Policy OK: version={policy.version} rules={len(policy.rules)} "
+            f"default_action={policy.default_action.value}\n"
+        )
