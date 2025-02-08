@@ -118,3 +118,29 @@ def _cmd_validate_policy(args: argparse.Namespace) -> int:
             f"Policy OK: version={policy.version} rules={len(policy.rules)} "
             f"default_action={policy.default_action.value}\n"
         )
+    return 0
+
+
+def _load_calls(path: Path) -> list[ToolCall]:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ValueError(f"cannot read calls file '{path}': {exc}") from exc
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"invalid JSON in calls file '{path}': {exc}") from exc
+
+    if isinstance(data, dict):
+        if "calls" in data:
+            raw_calls = data["calls"]
+        elif "tool" in data or "name" in data:
+            raw_calls = [data]
+        else:
+            raise ValueError(
+                "calls file object must contain a 'calls' list or be a tool call object"
+            )
+    elif isinstance(data, list):
+        raw_calls = data
+    else:
+        raise ValueError("calls file must contain a JSON object or array")
