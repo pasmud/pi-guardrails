@@ -144,3 +144,14 @@ def _load_calls(path: Path) -> list[ToolCall]:
         raw_calls = data
     else:
         raise ValueError("calls file must contain a JSON object or array")
+
+    if not isinstance(raw_calls, list):
+        raise ValueError("'calls' must be a list")
+
+    calls: list[ToolCall] = []
+    for index, item in enumerate(raw_calls):
+        try:
+            calls.append(ToolCall.from_dict(item))
+        except ValueError as exc:
+            raise ValueError(f"invalid call at index {index}: {exc}") from exc
+    return calls
