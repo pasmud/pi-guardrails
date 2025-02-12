@@ -155,3 +155,19 @@ def _load_calls(path: Path) -> list[ToolCall]:
         except ValueError as exc:
             raise ValueError(f"invalid call at index {index}: {exc}") from exc
     return calls
+
+
+def _format_text_report(report: dict[str, Any]) -> str:
+    lines: list[str] = []
+    summary = report["summary"]
+    lines.append(
+        "Summary: total={total} allowed={allowed} denied={denied} require_approval={require_approval}".format(
+            **summary
+        )
+    )
+    for idx, decision in enumerate(report["decisions"], start=1):
+        lines.append(
+            f"{idx}. tool={decision['tool']} action={decision['action']} allowed={str(decision['allowed']).lower()}"
+        )
+        for reason in decision.get("reasons", []):
+            lines.append(f"   - {reason}")
