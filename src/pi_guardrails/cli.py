@@ -171,3 +171,18 @@ def _format_text_report(report: dict[str, Any]) -> str:
         )
         for reason in decision.get("reasons", []):
             lines.append(f"   - {reason}")
+    state = report["budget_state"]
+    lines.append(
+        "Budget: calls={total_calls} arg_chars={total_arg_chars} estimated_cost={total_estimated_cost}".format(
+            **state
+        )
+    )
+    return "\n".join(lines) + "\n"
+
+
+def _emit_error(message: str, fmt: str) -> None:
+    if fmt == "json":
+        json.dump({"ok": False, "error": message}, sys.stdout, indent=2, sort_keys=True)
+        sys.stdout.write("\n")
+    else:
+        sys.stderr.write(f"error: {message}\n")
