@@ -186,3 +186,7 @@ def _emit_error(message: str, fmt: str) -> None:
         sys.stdout.write("\n")
     else:
         sys.stderr.write(f"error: {message}\n")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
