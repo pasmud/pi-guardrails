@@ -24,3 +24,12 @@ _ACTION_PRIORITY = {
     DecisionAction.REQUIRE_APPROVAL: 1,
     DecisionAction.DENY: 2,
 }
+
+
+class GuardrailEngine:
+    """Evaluate tool calls against a policy and session budgets.
+
+    The engine is deterministic and stateful: budget counters are updated only
+    when a call is allowed. Denied and approval-required calls do not consume
+    budget.
+    """
