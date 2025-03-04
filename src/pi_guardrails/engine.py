@@ -33,3 +33,10 @@ class GuardrailEngine:
     when a call is allowed. Denied and approval-required calls do not consume
     budget.
     """
+
+    def __init__(self, policy: Policy):
+        self.policy = policy
+        self.state = BudgetState()
+
+    def reset(self) -> None:
+        self.state = BudgetState()
