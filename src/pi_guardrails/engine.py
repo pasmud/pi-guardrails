@@ -162,3 +162,18 @@ class GuardrailEngine:
             self._consume_budget(tool_call)
 
         return decision
+
+    def evaluate_many(self, calls: list[ToolCall | dict[str, Any]]) -> EvaluationReport:
+        decisions = [self.evaluate(call) for call in calls]
+        return EvaluationReport(
+            decisions=decisions,
+            budget_state=self.state,
+            policy_version=self.policy.version,
+        )
+
+    # _action_from_tool_lists removed: list handling is in evaluate() to allow
+    # rule-based allow overrides while preserving deny/approval floors.
+    def _rule_matches(self, rule: Rule, call: ToolCall) -> bool:
+        if rule.tools and not any(_tool_matches(pattern, call.tool) for pattern in rule.tools):
+            return False
+        return _when_matches(rule.when, call)
