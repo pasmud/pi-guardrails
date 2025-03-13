@@ -177,3 +177,81 @@ class GuardrailEngine:
         if rule.tools and not any(_tool_matches(pattern, call.tool) for pattern in rule.tools):
             return False
         return _when_matches(rule.when, call)
+
+    def _check_budget(self, call: ToolCall) -> list[Violation]:
+        violations: list[Violation] = []
+        b = self.policy.budget
+        projected_calls = self.state.total_calls + 1
+        arg_chars = _arg_chars(call.args)
+        projected_arg_chars = self.state.total_arg_chars + arg_chars
+        projected_cost = self.state.total_estimated_cost + max(call.estimated_cost, 0)
+        projected_tool_calls = self.state.per_tool_calls.get(call.tool, 0) + 1
+
+        if b.max_calls is not None and projected_calls > b.max_calls:
+            violations.append(
+                Violation(
+                    code="budget.max_calls",
+                    message=(
+                        f"max_calls exceeded: projected {projected_calls} > limit {b.max_calls}"
+                    ),
+                    severity="error",
+                    details={"projected": projected_calls, "limit": b.max_calls},
+                )
+            )
+
+        tool_limit = b.per_tool_max_calls.get(call.tool)
+        if tool_limit is not None and projected_tool_calls > tool_limit:
+            violations.append(
+                Violation(
+                    code="budget.per_tool_max_calls",
+                    message=(
+                        f"per-tool max calls exceeded for '{call.tool}': "
+                        f"projected {projected_tool_calls} > limit {tool_limit}"
+                    ),
+                    severity="error",
+                    details={
+                        "tool": call.tool,
+                        "projected": projected_tool_calls,
+                        "limit": tool_limit,
+                    },
+                )
+            )
+
+        if b.max_total_arg_chars is not None and projected_arg_chars > b.max_total_arg_chars:
+            violations.append(
+                Violation(
+                    code="budget.max_total_arg_chars",
+                    message=(
+                        "max_total_arg_chars exceeded: "
+                        f"projected {projected_arg_chars} > limit {b.max_total_arg_chars}"
+                    ),
+                    severity="error",
+                    details={
+                        "projected": projected_arg_chars,
+                        "limit": b.max_total_arg_chars,
+                    },
+                )
+            )
+
+        if b.max_estimated_cost is not None and projected_cost > b.max_estimated_cost:
+            violations.append(
+                Violation(
+                    code="budget.max_estimated_cost",
+                    message=(
+                        "max_estimated_cost exceeded: "
+                        f"projected {projected_cost} > limit {b.max_estimated_cost}"
+                    ),
+                    severity="error",
+                    details={"projected": projected_cost, "limit": b.max_estimated_cost},
+                )
+            )
+
+        return violations
+
+    def _consume_budget(self, call: ToolCall) -> None:
+        self.state.total_calls += 1
+        self.state.total_arg_chars += _arg_chars(call.args)
+        self.state.total_estimated_cost += max(call.estimated_cost, 0)
+        self.state.per_tool_calls[call.tool] = (
+            self.state.per_tool_calls.get(call.tool, 0) + 1
+        )
