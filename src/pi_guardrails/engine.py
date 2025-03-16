@@ -255,3 +255,8 @@ class GuardrailEngine:
         self.state.per_tool_calls[call.tool] = (
             self.state.per_tool_calls.get(call.tool, 0) + 1
         )
+
+
+def _tool_matches(pattern: str, tool: str) -> bool:
+    # fnmatch gives simple glob semantics: *, ?, [seq].
+    return fnmatch.fnmatch(tool, pattern)
