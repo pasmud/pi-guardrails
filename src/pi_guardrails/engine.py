@@ -260,3 +260,15 @@ class GuardrailEngine:
 def _tool_matches(pattern: str, tool: str) -> bool:
     # fnmatch gives simple glob semantics: *, ?, [seq].
     return fnmatch.fnmatch(tool, pattern)
+
+
+def _arg_chars(args: dict[str, Any]) -> int:
+    try:
+        return len(json.dumps(args, sort_keys=True, separators=(",", ":")))
+    except (TypeError, ValueError):
+        return len(str(args))
+
+
+def _when_matches(when: dict[str, Any], call: ToolCall) -> bool:
+    if not when:
+        return True
