@@ -272,3 +272,12 @@ def _arg_chars(args: dict[str, Any]) -> int:
 def _when_matches(when: dict[str, Any], call: ToolCall) -> bool:
     if not when:
         return True
+
+    for key, expected in when.get("arg_equals", {}).items():
+        if _get_arg(call.args, key) != expected:
+            return False
+
+    for key, substring in when.get("arg_contains", {}).items():
+        value = _get_arg(call.args, key)
+        if not isinstance(value, str) or substring not in value:
+            return False
