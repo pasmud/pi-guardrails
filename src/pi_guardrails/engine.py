@@ -281,3 +281,8 @@ def _when_matches(when: dict[str, Any], call: ToolCall) -> bool:
         value = _get_arg(call.args, key)
         if not isinstance(value, str) or substring not in value:
             return False
+
+    for key, pattern in when.get("arg_matches", {}).items():
+        value = _get_arg(call.args, key)
+        if not isinstance(value, str) or re.search(pattern, value) is None:
+            return False
