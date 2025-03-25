@@ -286,3 +286,11 @@ def _when_matches(when: dict[str, Any], call: ToolCall) -> bool:
         value = _get_arg(call.args, key)
         if not isinstance(value, str) or re.search(pattern, value) is None:
             return False
+
+    for key in when.get("arg_exists", []):
+        if not _arg_exists(call.args, key):
+            return False
+
+    for key in when.get("arg_missing", []):
+        if _arg_exists(call.args, key):
+            return False
