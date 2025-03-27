@@ -294,3 +294,7 @@ def _when_matches(when: dict[str, Any], call: ToolCall) -> bool:
     for key in when.get("arg_missing", []):
         if _arg_exists(call.args, key):
             return False
+
+    if "actor_equals" in when:
+        if call.actor != when["actor_equals"]:
+            return False
