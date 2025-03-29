@@ -298,3 +298,11 @@ def _when_matches(when: dict[str, Any], call: ToolCall) -> bool:
     if "actor_equals" in when:
         if call.actor != when["actor_equals"]:
             return False
+
+    if "actor_in" in when:
+        if call.actor not in when["actor_in"]:
+            return False
+
+    if "intent_contains" in when:
+        if not isinstance(call.intent, str) or when["intent_contains"] not in call.intent:
+            return False
