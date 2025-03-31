@@ -306,3 +306,11 @@ def _when_matches(when: dict[str, Any], call: ToolCall) -> bool:
     if "intent_contains" in when:
         if not isinstance(call.intent, str) or when["intent_contains"] not in call.intent:
             return False
+
+    if "intent_matches" in when:
+        if not isinstance(call.intent, str) or re.search(when["intent_matches"], call.intent) is None:
+            return False
+
+    if "estimated_cost_gte" in when:
+        if call.estimated_cost < when["estimated_cost_gte"]:
+            return False
