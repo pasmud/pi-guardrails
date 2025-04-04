@@ -314,3 +314,7 @@ def _when_matches(when: dict[str, Any], call: ToolCall) -> bool:
     if "estimated_cost_gte" in when:
         if call.estimated_cost < when["estimated_cost_gte"]:
             return False
+
+    if "estimated_cost_lte" in when:
+        if call.estimated_cost > when["estimated_cost_lte"]:
+            return False
