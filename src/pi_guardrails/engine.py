@@ -324,3 +324,8 @@ def _when_matches(when: dict[str, Any], call: ToolCall) -> bool:
 
 def _arg_exists(args: dict[str, Any], path: str) -> bool:
     sentinel = object()
+    return _get_arg(args, path, default=sentinel) is not sentinel
+
+
+def _get_arg(args: dict[str, Any], path: str, default: Any = None) -> Any:
+    """Resolve dotted path with optional [index] segments."""
