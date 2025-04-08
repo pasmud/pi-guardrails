@@ -329,3 +329,5 @@ def _arg_exists(args: dict[str, Any], path: str) -> bool:
 
 def _get_arg(args: dict[str, Any], path: str, default: Any = None) -> Any:
     """Resolve dotted path with optional [index] segments."""
+
+    current: Any = args
