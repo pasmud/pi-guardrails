@@ -331,3 +331,16 @@ def _get_arg(args: dict[str, Any], path: str, default: Any = None) -> Any:
     """Resolve dotted path with optional [index] segments."""
 
     current: Any = args
+    for token in _iter_path_tokens(path):
+        if isinstance(token, str):
+            if not isinstance(current, dict) or token not in current:
+                return default
+            current = current[token]
+        else:
+            if not isinstance(current, list):
+                return default
+            index = token
+            if index < 0 or index >= len(current):
+                return default
+            current = current[index]
+    return current
