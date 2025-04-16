@@ -344,3 +344,6 @@ def _get_arg(args: dict[str, Any], path: str, default: Any = None) -> Any:
                 return default
             current = current[index]
     return current
+
+
+_PATH_RE = re.compile(r"([^[.\]]+)|\[(\d+)\]")
