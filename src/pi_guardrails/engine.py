@@ -347,3 +347,13 @@ def _get_arg(args: dict[str, Any], path: str, default: Any = None) -> Any:
 
 
 _PATH_RE = re.compile(r"([^[.\]]+)|\[(\d+)\]")
+
+
+def _iter_path_tokens(path: str) -> list[str | int]:
+    tokens: list[str | int] = []
+    for match in _PATH_RE.finditer(path):
+        name, index = match.groups()
+        if name is not None:
+            tokens.append(name)
+        else:
+            tokens.append(int(index))
