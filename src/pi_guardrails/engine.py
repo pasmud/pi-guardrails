@@ -357,3 +357,8 @@ def _iter_path_tokens(path: str) -> list[str | int]:
             tokens.append(name)
         else:
             tokens.append(int(index))
+    if not tokens:
+        # Fallback for unusual keys: treat whole path as one key.
+        return [path]
+    # Ensure we consumed meaningful chars; otherwise use raw path.
+    rebuilt = "".join(f"[{t}]" if isinstance(t, int) else t for t in tokens)
