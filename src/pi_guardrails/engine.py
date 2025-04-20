@@ -362,3 +362,5 @@ def _iter_path_tokens(path: str) -> list[str | int]:
         return [path]
     # Ensure we consumed meaningful chars; otherwise use raw path.
     rebuilt = "".join(f"[{t}]" if isinstance(t, int) else t for t in tokens)
+    # Allow dot separators in original by checking token coverage loosely.
+    cleaned_original = path.replace(".", "")
