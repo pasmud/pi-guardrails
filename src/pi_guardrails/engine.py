@@ -367,3 +367,4 @@ def _iter_path_tokens(path: str) -> list[str | int]:
     cleaned_rebuilt = rebuilt.replace(".", "")
     if cleaned_rebuilt != cleaned_original:
         return [path]
+    return tokens
