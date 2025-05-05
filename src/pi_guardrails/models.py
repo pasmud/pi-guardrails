@@ -4,3 +4,10 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from enum import Enum
+from typing import Any
+
+
+class DecisionAction(str, Enum):
+    """Outcome of evaluating a tool call."""
+
+    ALLOW = "allow"
