@@ -11,3 +11,10 @@ class DecisionAction(str, Enum):
     """Outcome of evaluating a tool call."""
 
     ALLOW = "allow"
+    DENY = "deny"
+    REQUIRE_APPROVAL = "require_approval"
+
+
+@dataclass
+class Violation:
+    """A single policy or budget violation."""
