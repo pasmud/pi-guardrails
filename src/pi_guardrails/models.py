@@ -18,3 +18,7 @@ class DecisionAction(str, Enum):
 @dataclass
 class Violation:
     """A single policy or budget violation."""
+
+    code: str
+    message: str
+    rule_id: str | None = None
