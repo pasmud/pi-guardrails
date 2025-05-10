@@ -22,3 +22,13 @@ class Violation:
     code: str
     message: str
     rule_id: str | None = None
+    severity: str = "error"
+    details: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        data = asdict(self)
+        if not data["details"]:
+            data.pop("details")
+        if data["rule_id"] is None:
+            data.pop("rule_id")
+        return data
