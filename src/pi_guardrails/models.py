@@ -32,3 +32,11 @@ class Violation:
         if data["rule_id"] is None:
             data.pop("rule_id")
         return data
+
+
+@dataclass
+class Decision:
+    """Decision returned for a tool call."""
+
+    action: DecisionAction
+    tool: str
