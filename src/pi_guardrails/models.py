@@ -40,3 +40,6 @@ class Decision:
 
     action: DecisionAction
     tool: str
+    reasons: list[str] = field(default_factory=list)
+    violations: list[Violation] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
