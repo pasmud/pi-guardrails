@@ -43,3 +43,22 @@ class Decision:
     reasons: list[str] = field(default_factory=list)
     violations: list[Violation] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def allowed(self) -> bool:
+        return self.action == DecisionAction.ALLOW
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "action": self.action.value,
+            "allowed": self.allowed,
+            "tool": self.tool,
+            "reasons": list(self.reasons),
+            "violations": [v.to_dict() for v in self.violations],
+            "metadata": dict(self.metadata),
+        }
+
+
+@dataclass
+class ToolCall:
+    """A tool invocation request to evaluate."""
