@@ -62,3 +62,7 @@ class Decision:
 @dataclass
 class ToolCall:
     """A tool invocation request to evaluate."""
+
+    tool: str
+    args: dict[str, Any] = field(default_factory=dict)
+    call_id: str | None = None
