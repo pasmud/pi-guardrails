@@ -66,3 +66,6 @@ class ToolCall:
     tool: str
     args: dict[str, Any] = field(default_factory=dict)
     call_id: str | None = None
+    actor: str | None = None
+    intent: str | None = None
+    estimated_cost: int = 0
