@@ -119,3 +119,7 @@ class ToolCall:
 @dataclass
 class Budget:
     """Budget limits for a session."""
+
+    max_calls: int | None = None
+    max_total_arg_chars: int | None = None
+    max_estimated_cost: int | None = None
