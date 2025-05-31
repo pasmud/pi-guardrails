@@ -123,3 +123,46 @@ class Budget:
     max_calls: int | None = None
     max_total_arg_chars: int | None = None
     max_estimated_cost: int | None = None
+    per_tool_max_calls: dict[str, int] = field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any] | None) -> "Budget":
+        if data is None:
+            return cls()
+        if not isinstance(data, dict):
+            raise ValueError("budget must be an object")
+        max_calls = _optional_non_negative_int(data.get("max_calls"), "max_calls")
+        max_total_arg_chars = _optional_non_negative_int(
+            data.get("max_total_arg_chars"), "max_total_arg_chars"
+        )
+        max_estimated_cost = _optional_non_negative_int(
+            data.get("max_estimated_cost"), "max_estimated_cost"
+        )
+        per_tool_raw = data.get("per_tool_max_calls", {})
+        if not isinstance(per_tool_raw, dict):
+            raise ValueError("per_tool_max_calls must be an object")
+        per_tool: dict[str, int] = {}
+        for key, value in per_tool_raw.items():
+            if not isinstance(key, str) or not key.strip():
+                raise ValueError("per_tool_max_calls keys must be non-empty strings")
+            if not isinstance(value, int) or value < 0:
+                raise ValueError(f"per_tool_max_calls['{key}'] must be a non-negative integer")
+            per_tool[key] = value
+        return cls(
+            max_calls=max_calls,
+            max_total_arg_chars=max_total_arg_chars,
+            max_estimated_cost=max_estimated_cost,
+            per_tool_max_calls=per_tool,
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {}
+        if self.max_calls is not None:
+            data["max_calls"] = self.max_calls
+        if self.max_total_arg_chars is not None:
+            data["max_total_arg_chars"] = self.max_total_arg_chars
+        if self.max_estimated_cost is not None:
+            data["max_estimated_cost"] = self.max_estimated_cost
+        if self.per_tool_max_calls:
+            data["per_tool_max_calls"] = dict(self.per_tool_max_calls)
+        return data
