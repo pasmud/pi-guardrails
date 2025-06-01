@@ -166,3 +166,11 @@ class Budget:
         if self.per_tool_max_calls:
             data["per_tool_max_calls"] = dict(self.per_tool_max_calls)
         return data
+
+
+@dataclass
+class Rule:
+    """A policy rule applied to tool calls."""
+
+    id: str
+    description: str = ""
