@@ -177,3 +177,54 @@ class Rule:
     tools: list[str] = field(default_factory=list)  # glob patterns; empty means any
     action: DecisionAction = DecisionAction.DENY
     reason: str = ""
+    when: dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "Rule":
+        if not isinstance(data, dict):
+            raise ValueError("rule must be an object")
+        rule_id = data.get("id")
+        if not isinstance(rule_id, str) or not rule_id.strip():
+            raise ValueError("rule requires a non-empty 'id'")
+        description = data.get("description", "")
+        if not isinstance(description, str):
+            raise ValueError("rule description must be a string")
+        tools = data.get("tools", [])
+        if isinstance(tools, str):
+            tools = [tools]
+        if not isinstance(tools, list) or not all(isinstance(t, str) and t for t in tools):
+            raise ValueError("rule tools must be a list of non-empty strings")
+        action_raw = data.get("action", "deny")
+        if not isinstance(action_raw, str):
+            raise ValueError("rule action must be a string")
+        try:
+            action = DecisionAction(action_raw.lower())
+        except ValueError as exc:
+            allowed = ", ".join(a.value for a in DecisionAction)
+            raise ValueError(f"rule action must be one of: {allowed}") from exc
+        reason = data.get("reason", "")
+        if not isinstance(reason, str):
+            raise ValueError("rule reason must be a string")
+        when = data.get("when", {})
+        if not isinstance(when, dict):
+            raise ValueError("rule when must be an object")
+        return cls(
+            id=rule_id.strip(),
+            description=description,
+            tools=list(tools),
+            action=action,
+            reason=reason,
+            when=dict(when),
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {"id": self.id, "action": self.action.value}
+        if self.description:
+            data["description"] = self.description
+        if self.tools:
+            data["tools"] = list(self.tools)
+        if self.reason:
+            data["reason"] = self.reason
+        if self.when:
+            data["when"] = dict(self.when)
+        return data
