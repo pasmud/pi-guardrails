@@ -174,3 +174,6 @@ class Rule:
 
     id: str
     description: str = ""
+    tools: list[str] = field(default_factory=list)  # glob patterns; empty means any
+    action: DecisionAction = DecisionAction.DENY
+    reason: str = ""
