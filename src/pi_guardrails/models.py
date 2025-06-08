@@ -228,3 +228,11 @@ class Rule:
         if self.when:
             data["when"] = dict(self.when)
         return data
+
+
+@dataclass
+class Policy:
+    """Complete policy configuration."""
+
+    version: int = 1
+    default_action: DecisionAction = DecisionAction.ALLOW
