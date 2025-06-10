@@ -236,3 +236,6 @@ class Policy:
 
     version: int = 1
     default_action: DecisionAction = DecisionAction.ALLOW
+    rules: list[Rule] = field(default_factory=list)
+    budget: Budget = field(default_factory=Budget)
+    allowed_tools: list[str] = field(default_factory=list)
