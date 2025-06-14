@@ -239,3 +239,40 @@ class Policy:
     rules: list[Rule] = field(default_factory=list)
     budget: Budget = field(default_factory=Budget)
     allowed_tools: list[str] = field(default_factory=list)
+    denied_tools: list[str] = field(default_factory=list)
+    require_approval_tools: list[str] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "Policy":
+        if not isinstance(data, dict):
+            raise ValueError("policy must be an object")
+        version = data.get("version", 1)
+        if not isinstance(version, int) or version < 1:
+            raise ValueError("policy version must be a positive integer")
+        default_raw = data.get("default_action", "allow")
+        if not isinstance(default_raw, str):
+            raise ValueError("default_action must be a string")
+        try:
+            default_action = DecisionAction(default_raw.lower())
+        except ValueError as exc:
+            allowed = ", ".join(a.value for a in DecisionAction)
+            raise ValueError(f"default_action must be one of: {allowed}") from exc
+        rules_raw = data.get("rules", [])
+        if not isinstance(rules_raw, list):
+            raise ValueError("rules must be a list")
+        rules = [Rule.from_dict(r) for r in rules_raw]
+        budget = Budget.from_dict(data.get("budget"))
+        allowed_tools = _string_list(data.get("allowed_tools", []), "allowed_tools")
+        denied_tools = _string_list(data.get("denied_tools", []), "denied_tools")
+        require_approval_tools = _string_list(
+            data.get("require_approval_tools", []), "require_approval_tools"
+        )
+        return cls(
+            version=version,
+            default_action=default_action,
+            rules=rules,
+            budget=budget,
+            allowed_tools=allowed_tools,
+            denied_tools=denied_tools,
+            require_approval_tools=require_approval_tools,
+        )
