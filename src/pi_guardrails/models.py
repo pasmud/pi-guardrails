@@ -300,3 +300,6 @@ class BudgetState:
     """Mutable budget counters for a session."""
 
     total_calls: int = 0
+    total_arg_chars: int = 0
+    total_estimated_cost: int = 0
+    per_tool_calls: dict[str, int] = field(default_factory=dict)
