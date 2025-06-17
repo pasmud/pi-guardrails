@@ -276,3 +276,27 @@ class Policy:
             denied_tools=denied_tools,
             require_approval_tools=require_approval_tools,
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "version": self.version,
+            "default_action": self.default_action.value,
+            "rules": [r.to_dict() for r in self.rules],
+        }
+        budget = self.budget.to_dict()
+        if budget:
+            data["budget"] = budget
+        if self.allowed_tools:
+            data["allowed_tools"] = list(self.allowed_tools)
+        if self.denied_tools:
+            data["denied_tools"] = list(self.denied_tools)
+        if self.require_approval_tools:
+            data["require_approval_tools"] = list(self.require_approval_tools)
+        return data
+
+
+@dataclass
+class BudgetState:
+    """Mutable budget counters for a session."""
+
+    total_calls: int = 0
