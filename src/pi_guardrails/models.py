@@ -303,3 +303,18 @@ class BudgetState:
     total_arg_chars: int = 0
     total_estimated_cost: int = 0
     per_tool_calls: dict[str, int] = field(default_factory=dict)
+
+    def snapshot(self) -> dict[str, Any]:
+        return {
+            "total_calls": self.total_calls,
+            "total_arg_chars": self.total_arg_chars,
+            "total_estimated_cost": self.total_estimated_cost,
+            "per_tool_calls": dict(sorted(self.per_tool_calls.items())),
+        }
+
+
+@dataclass
+class EvaluationReport:
+    """Report for one or more evaluated tool calls."""
+
+    decisions: list[Decision]
