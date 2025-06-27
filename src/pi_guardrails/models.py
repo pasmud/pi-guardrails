@@ -318,3 +318,9 @@ class EvaluationReport:
     """Report for one or more evaluated tool calls."""
 
     decisions: list[Decision]
+    budget_state: BudgetState
+    policy_version: int = 1
+
+    @property
+    def allowed_count(self) -> int:
+        return sum(1 for d in self.decisions if d.action == DecisionAction.ALLOW)
