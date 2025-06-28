@@ -324,3 +324,24 @@ class EvaluationReport:
     @property
     def allowed_count(self) -> int:
         return sum(1 for d in self.decisions if d.action == DecisionAction.ALLOW)
+
+    @property
+    def denied_count(self) -> int:
+        return sum(1 for d in self.decisions if d.action == DecisionAction.DENY)
+
+    @property
+    def approval_count(self) -> int:
+        return sum(1 for d in self.decisions if d.action == DecisionAction.REQUIRE_APPROVAL)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "policy_version": self.policy_version,
+            "summary": {
+                "total": len(self.decisions),
+                "allowed": self.allowed_count,
+                "denied": self.denied_count,
+                "require_approval": self.approval_count,
+            },
+            "decisions": [d.to_dict() for d in self.decisions],
+            "budget_state": self.budget_state.snapshot(),
+        }
