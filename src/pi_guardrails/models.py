@@ -345,3 +345,11 @@ class EvaluationReport:
             "decisions": [d.to_dict() for d in self.decisions],
             "budget_state": self.budget_state.snapshot(),
         }
+
+
+def _optional_non_negative_int(value: Any, field_name: str) -> int | None:
+    if value is None:
+        return None
+    if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+        raise ValueError(f"{field_name} must be a non-negative integer")
+    return value
