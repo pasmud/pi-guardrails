@@ -353,3 +353,12 @@ def _optional_non_negative_int(value: Any, field_name: str) -> int | None:
     if not isinstance(value, int) or isinstance(value, bool) or value < 0:
         raise ValueError(f"{field_name} must be a non-negative integer")
     return value
+
+
+def _string_list(value: Any, field_name: str) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        value = [value]
+    if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
+        raise ValueError(f"{field_name} must be a list of non-empty strings")
