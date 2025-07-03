@@ -362,3 +362,4 @@ def _string_list(value: Any, field_name: str) -> list[str]:
         value = [value]
     if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
         raise ValueError(f"{field_name} must be a list of non-empty strings")
+    return list(value)
