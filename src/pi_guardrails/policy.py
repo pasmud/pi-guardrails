@@ -34,3 +34,12 @@ def load_policy(source: str | Path | dict[str, Any]) -> Policy:
         policy = Policy.from_dict(data)
     except ValueError as exc:
         raise PolicyError(str(exc)) from exc
+    validate_policy(policy)
+    return policy
+
+
+def _load_from_path(path: Path) -> dict[str, Any]:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise PolicyError(f"cannot read policy file '{path}': {exc}") from exc
