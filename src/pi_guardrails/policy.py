@@ -43,3 +43,10 @@ def _load_from_path(path: Path) -> dict[str, Any]:
         text = path.read_text(encoding="utf-8")
     except OSError as exc:
         raise PolicyError(f"cannot read policy file '{path}': {exc}") from exc
+    return _parse_json(text, source=str(path))
+
+
+def _load_from_string(value: str) -> dict[str, Any]:
+    stripped = value.strip()
+    if not stripped:
+        raise PolicyError("policy string is empty")
