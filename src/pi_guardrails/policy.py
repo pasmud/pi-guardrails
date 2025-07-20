@@ -50,3 +50,9 @@ def _load_from_string(value: str) -> dict[str, Any]:
     stripped = value.strip()
     if not stripped:
         raise PolicyError("policy string is empty")
+    # Heuristic: if it looks like JSON, parse directly; otherwise treat as path.
+    if stripped.startswith("{"):
+        return _parse_json(stripped, source="<string>")
+    path = Path(stripped)
+    if path.exists() and path.is_file():
+        return _load_from_path(path)
