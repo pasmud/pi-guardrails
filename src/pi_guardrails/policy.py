@@ -56,3 +56,15 @@ def _load_from_string(value: str) -> dict[str, Any]:
     path = Path(stripped)
     if path.exists() and path.is_file():
         return _load_from_path(path)
+    # Fall back to parsing JSON to give a useful error for malformed inline JSON.
+    return _parse_json(stripped, source="<string>")
+
+
+def _parse_json(text: str, *, source: str) -> dict[str, Any]:
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise PolicyError(f"invalid JSON in policy {source}: {exc}") from exc
+    if not isinstance(data, dict):
+        raise PolicyError(f"policy {source} must contain a JSON object")
+    return data
