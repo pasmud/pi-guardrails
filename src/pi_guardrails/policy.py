@@ -79,3 +79,14 @@ def validate_policy(policy: Policy) -> None:
             raise PolicyError(f"duplicate rule id: '{rule.id}'")
         seen_ids.add(rule.id)
         _validate_when(rule.id, rule.when)
+
+    for tool_list_name in ("allowed_tools", "denied_tools", "require_approval_tools"):
+        values = getattr(policy, tool_list_name)
+        if len(values) != len(set(values)):
+            raise PolicyError(f"{tool_list_name} contains duplicates")
+
+    overlap = set(policy.allowed_tools) & set(policy.denied_tools)
+    if overlap:
+        raise PolicyError(
+            "tools cannot be both allowed and denied: " + ", ".join(sorted(overlap))
+        )
