@@ -68,3 +68,14 @@ def _parse_json(text: str, *, source: str) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise PolicyError(f"policy {source} must contain a JSON object")
     return data
+
+
+def validate_policy(policy: Policy) -> None:
+    """Perform semantic validation beyond structural parsing."""
+
+    seen_ids: set[str] = set()
+    for rule in policy.rules:
+        if rule.id in seen_ids:
+            raise PolicyError(f"duplicate rule id: '{rule.id}'")
+        seen_ids.add(rule.id)
+        _validate_when(rule.id, rule.when)
