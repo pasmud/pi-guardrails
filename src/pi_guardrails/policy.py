@@ -90,3 +90,28 @@ def validate_policy(policy: Policy) -> None:
         raise PolicyError(
             "tools cannot be both allowed and denied: " + ", ".join(sorted(overlap))
         )
+
+
+_ALLOWED_WHEN_KEYS = {
+    "arg_equals",
+    "arg_contains",
+    "arg_matches",
+    "arg_exists",
+    "arg_missing",
+    "actor_equals",
+    "actor_in",
+    "intent_contains",
+    "intent_matches",
+    "estimated_cost_gte",
+    "estimated_cost_lte",
+}
+
+
+def _validate_when(rule_id: str, when: dict[str, Any]) -> None:
+    unknown = set(when) - _ALLOWED_WHEN_KEYS
+    if unknown:
+        allowed = ", ".join(sorted(_ALLOWED_WHEN_KEYS))
+        raise PolicyError(
+            f"rule '{rule_id}' has unknown when keys: {', '.join(sorted(unknown))}; "
+            f"allowed: {allowed}"
+        )
