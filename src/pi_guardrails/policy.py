@@ -115,3 +115,42 @@ def _validate_when(rule_id: str, when: dict[str, Any]) -> None:
             f"rule '{rule_id}' has unknown when keys: {', '.join(sorted(unknown))}; "
             f"allowed: {allowed}"
         )
+
+    for key in ("arg_equals", "arg_contains", "arg_matches"):
+        value = when.get(key)
+        if value is None:
+            continue
+        if not isinstance(value, dict):
+            raise PolicyError(f"rule '{rule_id}' when.{key} must be an object")
+        for arg_name, matcher in value.items():
+            if not isinstance(arg_name, str) or not arg_name:
+                raise PolicyError(f"rule '{rule_id}' when.{key} keys must be non-empty strings")
+            if key == "arg_equals":
+                _ensure_json_scalar(rule_id, f"when.{key}.{arg_name}", matcher)
+            elif key == "arg_contains":
+                if not isinstance(matcher, str):
+                    raise PolicyError(
+                        f"rule '{rule_id}' when.{key}.{arg_name} must be a string"
+                    )
+            elif key == "arg_matches":
+                if not isinstance(matcher, str):
+                    raise PolicyError(
+                        f"rule '{rule_id}' when.{key}.{arg_name} must be a regex string"
+                    )
+                _ensure_regex(rule_id, matcher)
+
+    for key in ("arg_exists", "arg_missing"):
+        value = when.get(key)
+        if value is None:
+            continue
+        if not isinstance(value, list) or not all(
+            isinstance(item, str) and item for item in value
+        ):
+            raise PolicyError(f"rule '{rule_id}' when.{key} must be a list of strings")
+
+    if "actor_equals" in when and not isinstance(when["actor_equals"], str):
+        raise PolicyError(f"rule '{rule_id}' when.actor_equals must be a string")
+    if "actor_in" in when:
+        actor_in = when["actor_in"]
+        if not isinstance(actor_in, list) or not all(isinstance(a, str) for a in actor_in):
+            raise PolicyError(f"rule '{rule_id}' when.actor_in must be a list of strings")
