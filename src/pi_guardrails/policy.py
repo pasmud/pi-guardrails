@@ -154,3 +154,17 @@ def _validate_when(rule_id: str, when: dict[str, Any]) -> None:
         actor_in = when["actor_in"]
         if not isinstance(actor_in, list) or not all(isinstance(a, str) for a in actor_in):
             raise PolicyError(f"rule '{rule_id}' when.actor_in must be a list of strings")
+    if "intent_contains" in when and not isinstance(when["intent_contains"], str):
+        raise PolicyError(f"rule '{rule_id}' when.intent_contains must be a string")
+    if "intent_matches" in when:
+        pattern = when["intent_matches"]
+        if not isinstance(pattern, str):
+            raise PolicyError(f"rule '{rule_id}' when.intent_matches must be a regex string")
+        _ensure_regex(rule_id, pattern)
+    for key in ("estimated_cost_gte", "estimated_cost_lte"):
+        if key in when:
+            value = when[key]
+            if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+                raise PolicyError(
+                    f"rule '{rule_id}' when.{key} must be a non-negative integer"
+                )
