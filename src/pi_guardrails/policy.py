@@ -168,3 +168,17 @@ def _validate_when(rule_id: str, when: dict[str, Any]) -> None:
                 raise PolicyError(
                     f"rule '{rule_id}' when.{key} must be a non-negative integer"
                 )
+
+
+def _ensure_json_scalar(rule_id: str, field: str, value: Any) -> None:
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        if isinstance(value, bool):
+            return
+        if isinstance(value, (int, float)) and isinstance(value, bool):
+            raise PolicyError(f"rule '{rule_id}' {field} must be a scalar")
+        return
+    raise PolicyError(f"rule '{rule_id}' {field} must be a scalar value")
+
+
+def _ensure_regex(rule_id: str, pattern: str) -> None:
+    import re
