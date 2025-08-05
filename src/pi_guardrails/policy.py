@@ -182,3 +182,8 @@ def _ensure_json_scalar(rule_id: str, field: str, value: Any) -> None:
 
 def _ensure_regex(rule_id: str, pattern: str) -> None:
     import re
+
+    try:
+        re.compile(pattern)
+    except re.error as exc:
+        raise PolicyError(f"rule '{rule_id}' has invalid regex '{pattern}': {exc}") from exc
