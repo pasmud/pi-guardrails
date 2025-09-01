@@ -54,3 +54,45 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["summary"]["allowed"], 2)
         self.assertEqual(payload["summary"]["denied"], 2)
         self.assertEqual(payload["summary"]["require_approval"], 2)
+
+    def test_check_fail_on_deny(self) -> None:
+        policy = REPO_ROOT / "examples" / "policy.json"
+        calls = REPO_ROOT / "examples" / "calls.json"
+        result = run_cli(
+            "check",
+            "--policy",
+            str(policy),
+            "--calls",
+            str(calls),
+            "--fail-on-deny",
+        )
+        self.assertEqual(result.returncode, 2)
+        payload = json.loads(result.stdout)
+        self.assertGreater(payload["summary"]["denied"], 0)
+
+    def test_check_text_output(self) -> None:
+        policy = REPO_ROOT / "examples" / "policy.json"
+        calls = REPO_ROOT / "examples" / "calls.json"
+        result = run_cli(
+            "check",
+            "--policy",
+            str(policy),
+            "--calls",
+            str(calls),
+            "--format",
+            "text",
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+        self.assertIn("Summary:", result.stdout)
+        self.assertIn("tool=read_file", result.stdout)
+
+    def test_invalid_policy_returns_error(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            bad = Path(tmpdir) / "bad.json"
+            bad.write_text("{bad json", encoding="utf-8")
+            calls = REPO_ROOT / "examples" / "calls.json"
+            result = run_cli("check", "--policy", str(bad), "--calls", str(calls))
+            self.assertEqual(result.returncode, 2)
+            payload = json.loads(result.stdout)
+            self.assertFalse(payload["ok"])
+            self.assertIn("invalid JSON", payload["error"])
