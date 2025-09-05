@@ -96,3 +96,7 @@ class CliTests(unittest.TestCase):
             payload = json.loads(result.stdout)
             self.assertFalse(payload["ok"])
             self.assertIn("invalid JSON", payload["error"])
+
+
+if __name__ == "__main__":
+    unittest.main()
