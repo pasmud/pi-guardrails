@@ -5,3 +5,4 @@ from __future__ import annotations
 import unittest
 
 from pi_guardrails import DecisionAction, GuardrailEngine, load_policy
+from pi_guardrails.models import ToolCall
