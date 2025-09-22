@@ -22,3 +22,25 @@ class GuardrailEngineTests(unittest.TestCase):
         decision = engine.evaluate({"tool": "shell_exec", "args": {"cmd": "ls"}})
         self.assertEqual(decision.action, DecisionAction.DENY)
         self.assertFalse(decision.allowed)
+
+    def test_deny_rule_overrides_allowlist(self) -> None:
+        policy = load_policy(
+            {
+                "version": 1,
+                "default_action": "deny",
+                "allowed_tools": ["read_file"],
+                "rules": [
+                    {
+                        "id": "deny-secrets",
+                        "tools": ["read_file"],
+                        "action": "deny",
+                        "reason": "secret path",
+                        "when": {"arg_contains": {"path": "secret"}},
+                    }
+                ],
+            }
+        )
+        engine = GuardrailEngine(policy)
+        decision = engine.evaluate({"tool": "read_file", "args": {"path": "docs/secret.txt"}})
+        self.assertEqual(decision.action, DecisionAction.DENY)
+        self.assertTrue(any(v.rule_id == "deny-secrets" for v in decision.violations))
