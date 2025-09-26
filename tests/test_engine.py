@@ -80,3 +80,18 @@ class GuardrailEngineTests(unittest.TestCase):
         self.assertEqual(third.action, DecisionAction.DENY)
         self.assertTrue(any(v.code == "budget.max_calls" for v in third.violations))
         self.assertEqual(engine.state.total_calls, 2)
+
+    def test_per_tool_budget(self) -> None:
+        policy = load_policy(
+            {
+                "version": 1,
+                "default_action": "allow",
+                "budget": {"per_tool_max_calls": {"search_docs": 1}},
+            }
+        )
+        engine = GuardrailEngine(policy)
+        first = engine.evaluate({"tool": "search_docs", "args": {"q": "a"}})
+        second = engine.evaluate({"tool": "search_docs", "args": {"q": "b"}})
+        self.assertEqual(first.action, DecisionAction.ALLOW)
+        self.assertEqual(second.action, DecisionAction.DENY)
+        self.assertEqual(engine.state.per_tool_calls["search_docs"], 1)
