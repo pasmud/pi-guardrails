@@ -95,3 +95,18 @@ class GuardrailEngineTests(unittest.TestCase):
         self.assertEqual(first.action, DecisionAction.ALLOW)
         self.assertEqual(second.action, DecisionAction.DENY)
         self.assertEqual(engine.state.per_tool_calls["search_docs"], 1)
+
+    def test_arg_chars_budget(self) -> None:
+        policy = load_policy(
+            {
+                "version": 1,
+                "default_action": "allow",
+                "budget": {"max_total_arg_chars": 30},
+            }
+        )
+        engine = GuardrailEngine(policy)
+        ok = engine.evaluate({"tool": "x", "args": {"a": "12345"}})
+        denied = engine.evaluate({"tool": "x", "args": {"a": "12345678901234567890"}})
+        self.assertEqual(ok.action, DecisionAction.ALLOW)
+        self.assertEqual(denied.action, DecisionAction.DENY)
+        self.assertTrue(any(v.code == "budget.max_total_arg_chars" for v in denied.violations))
