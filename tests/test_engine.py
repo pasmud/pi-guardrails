@@ -110,3 +110,18 @@ class GuardrailEngineTests(unittest.TestCase):
         self.assertEqual(ok.action, DecisionAction.ALLOW)
         self.assertEqual(denied.action, DecisionAction.DENY)
         self.assertTrue(any(v.code == "budget.max_total_arg_chars" for v in denied.violations))
+
+    def test_estimated_cost_budget(self) -> None:
+        policy = load_policy(
+            {
+                "version": 1,
+                "default_action": "allow",
+                "budget": {"max_estimated_cost": 5},
+            }
+        )
+        engine = GuardrailEngine(policy)
+        ok = engine.evaluate({"tool": "x", "args": {}, "estimated_cost": 3})
+        denied = engine.evaluate({"tool": "y", "args": {}, "estimated_cost": 3})
+        self.assertEqual(ok.action, DecisionAction.ALLOW)
+        self.assertEqual(denied.action, DecisionAction.DENY)
+        self.assertTrue(any(v.code == "budget.max_estimated_cost" for v in denied.violations))
