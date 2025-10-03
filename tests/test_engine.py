@@ -125,3 +125,37 @@ class GuardrailEngineTests(unittest.TestCase):
         self.assertEqual(ok.action, DecisionAction.ALLOW)
         self.assertEqual(denied.action, DecisionAction.DENY)
         self.assertTrue(any(v.code == "budget.max_estimated_cost" for v in denied.violations))
+
+    def test_dotted_arg_path_matching(self) -> None:
+        policy = load_policy(
+            {
+                "version": 1,
+                "default_action": "deny",
+                "rules": [
+                    {
+                        "id": "allow-safe-http",
+                        "tools": ["http_request"],
+                        "action": "allow",
+                        "when": {
+                            "arg_equals": {"config.method": "GET"},
+                            "arg_matches": {"config.url": "^https://api\\.example\\.com/"},
+                        },
+                    }
+                ],
+            }
+        )
+        engine = GuardrailEngine(policy)
+        allowed = engine.evaluate(
+            {
+                "tool": "http_request",
+                "args": {"config": {"method": "GET", "url": "https://api.example.com/data"}},
+            }
+        )
+        denied = engine.evaluate(
+            {
+                "tool": "http_request",
+                "args": {"config": {"method": "POST", "url": "https://api.example.com/data"}},
+            }
+        )
+        self.assertEqual(allowed.action, DecisionAction.ALLOW)
+        self.assertEqual(denied.action, DecisionAction.DENY)
