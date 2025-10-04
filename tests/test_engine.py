@@ -159,3 +159,24 @@ class GuardrailEngineTests(unittest.TestCase):
         )
         self.assertEqual(allowed.action, DecisionAction.ALLOW)
         self.assertEqual(denied.action, DecisionAction.DENY)
+
+    def test_evaluate_many_report(self) -> None:
+        policy = load_policy(
+            {
+                "version": 1,
+                "default_action": "allow",
+                "denied_tools": ["shell_exec"],
+            }
+        )
+        engine = GuardrailEngine(policy)
+        report = engine.evaluate_many(
+            [
+                ToolCall(tool="search_docs", args={"q": "hi"}),
+                {"tool": "shell_exec", "args": {"cmd": "id"}},
+            ]
+        )
+        data = report.to_dict()
+        self.assertEqual(data["summary"]["total"], 2)
+        self.assertEqual(data["summary"]["allowed"], 1)
+        self.assertEqual(data["summary"]["denied"], 1)
+        self.assertEqual(data["budget_state"]["total_calls"], 1)
