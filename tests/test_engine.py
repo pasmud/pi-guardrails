@@ -180,3 +180,7 @@ class GuardrailEngineTests(unittest.TestCase):
         self.assertEqual(data["summary"]["allowed"], 1)
         self.assertEqual(data["summary"]["denied"], 1)
         self.assertEqual(data["budget_state"]["total_calls"], 1)
+
+    def test_invalid_policy_rejected(self) -> None:
+        with self.assertRaises(Exception):
+            load_policy({"version": 1, "default_action": "allow", "rules": [{"id": ""}]})
