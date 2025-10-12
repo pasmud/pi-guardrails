@@ -184,3 +184,7 @@ class GuardrailEngineTests(unittest.TestCase):
     def test_invalid_policy_rejected(self) -> None:
         with self.assertRaises(Exception):
             load_policy({"version": 1, "default_action": "allow", "rules": [{"id": ""}]})
+
+
+if __name__ == "__main__":
+    unittest.main()
