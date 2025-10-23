@@ -22,3 +22,26 @@ class PolicyLoadingTests(unittest.TestCase):
         self.assertEqual(policy.version, 1)
         self.assertEqual(len(policy.rules), 1)
         self.assertEqual(policy.rules[0].id, "r1")
+
+    def test_load_policy_from_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "policy.json"
+            path.write_text(
+                json.dumps({"version": 1, "default_action": "deny", "rules": []}),
+                encoding="utf-8",
+            )
+            policy = load_policy(path)
+            self.assertEqual(policy.default_action.value, "deny")
+
+    def test_reject_duplicate_rule_ids(self) -> None:
+        with self.assertRaises(PolicyError):
+            load_policy(
+                {
+                    "version": 1,
+                    "default_action": "allow",
+                    "rules": [
+                        {"id": "dup", "action": "deny", "tools": ["a"]},
+                        {"id": "dup", "action": "deny", "tools": ["b"]},
+                    ],
+                }
+            )
