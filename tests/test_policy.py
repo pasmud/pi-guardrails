@@ -45,3 +45,35 @@ class PolicyLoadingTests(unittest.TestCase):
                     ],
                 }
             )
+
+    def test_reject_unknown_when_key(self) -> None:
+        with self.assertRaises(PolicyError):
+            load_policy(
+                {
+                    "version": 1,
+                    "default_action": "allow",
+                    "rules": [
+                        {
+                            "id": "r1",
+                            "action": "deny",
+                            "when": {"unknown_key": "value"},
+                        }
+                    ],
+                }
+            )
+
+    def test_reject_invalid_regex(self) -> None:
+        with self.assertRaises(PolicyError):
+            load_policy(
+                {
+                    "version": 1,
+                    "default_action": "allow",
+                    "rules": [
+                        {
+                            "id": "r1",
+                            "action": "deny",
+                            "when": {"arg_matches": {"path": "["}},
+                        }
+                    ],
+                }
+            )
