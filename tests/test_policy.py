@@ -77,3 +77,21 @@ class PolicyLoadingTests(unittest.TestCase):
                     ],
                 }
             )
+
+    def test_reject_allow_deny_overlap(self) -> None:
+        with self.assertRaises(PolicyError):
+            load_policy(
+                {
+                    "version": 1,
+                    "default_action": "allow",
+                    "allowed_tools": ["tool_a"],
+                    "denied_tools": ["tool_a"],
+                }
+            )
+
+    def test_reject_malformed_json(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "bad.json"
+            path.write_text("{", encoding="utf-8")
+            with self.assertRaises(PolicyError):
+                load_policy(path)
