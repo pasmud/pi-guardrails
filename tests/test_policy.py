@@ -95,3 +95,7 @@ class PolicyLoadingTests(unittest.TestCase):
             path.write_text("{", encoding="utf-8")
             with self.assertRaises(PolicyError):
                 load_policy(path)
+
+
+if __name__ == "__main__":
+    unittest.main()
