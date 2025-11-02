@@ -1,0 +1,31 @@
+{
+  "calls": [
+    {
+      "tool": "search_docs",
+      "args": {"query": "guardrails"},
+      "estimated_cost": 1
+    },
+    {
+      "tool": "read_file",
+      "args": {"path": "docs/guide.md"}
+    },
+    {
+      "tool": "read_file",
+      "args": {"path": "docs/secret-plan.md"}
+    },
+    {
+      "tool": "send_email",
+      "args": {"to": "security@example.com", "subject": "Report"},
+      "estimated_cost": 1
+    },
+    {
+      "tool": "shell_exec",
+      "args": {"cmd": "cat /etc/passwd"}
+    },
+    {
+      "tool": "search_docs",
+      "args": {"query": "expensive"},
+      "estimated_cost": 4
+    }
+  ]
+}
