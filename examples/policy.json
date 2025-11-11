@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "default_action": "deny",
+  "allowed_tools": ["search_docs", "read_file", "summarize"],
+  "denied_tools": ["shell_exec"],
+  "require_approval_tools": ["send_email"],
+  "budget": {
+    "max_calls": 5,
+    "max_total_arg_chars": 2000,
+    "max_estimated_cost": 10,
+    "per_tool_max_calls": {
+      "search_docs": 3
+    }
+  },
+  "rules": [
+    {
+      "id": "allow-read-docs",
+      "description": "Allow reading files only from docs directory",
+      "tools": ["read_file"],
+      "action": "allow",
+      "reason": "read_file is limited to docs/",
+      "when": {
+        "arg_matches": {
+          "path": "^docs/[A-Za-z0-9_./-]+$"
+        }
+      }
+    },
+    {
+      "id": "deny-read-secrets",
+      "description": "Block attempts to read secrets",
+      "tools": ["read_file"],
+      "action": "deny",
+      "reason": "secret paths are not allowed",
+      "when": {
+        "arg_contains": {
+          "path": "secret"
+        }
+      }
+    },
+    {
+      "id": "require-approval-large-search",
+      "description": "Large search queries require approval",
+      "tools": ["search_docs"],
+      "action": "require_approval",
+      "reason": "large query requires approval",
+      "when": {
+        "estimated_cost_gte": 4
+      }
+    }
+  ]
+}
