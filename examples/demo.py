@@ -22,3 +22,7 @@ def main() -> int:
     report = engine.evaluate_many(calls)
     print(json.dumps(report.to_dict(), indent=2, sort_keys=True))
     return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
