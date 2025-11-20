@@ -13,3 +13,14 @@ It is designed for agent runtimes that need a clear "should this tool call run?"
 - **Deterministic reports**: JSON/text output for single calls or batches.
 - **Offline & stdlib-first**: core library uses Python standard library only.
 
+## Install
+
+From source:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -e .
+```
+
