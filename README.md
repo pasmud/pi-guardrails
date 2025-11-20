@@ -24,3 +24,11 @@ python -m pip install --upgrade pip
 python -m pip install -e .
 ```
 
+For development/testing with pytest:
+
+```bash
+python -m pip install -e ".[dev]"
+```
+
+## Quick start
+
