@@ -32,3 +32,17 @@ python -m pip install -e ".[dev]"
 
 ## Quick start
 
+### 1) Validate a policy
+
+```bash
+python -m pi_guardrails validate-policy --policy examples/policy.json
+```
+
+### 2) Check tool calls against a policy
+
+```bash
+python -m pi_guardrails check \
+  --policy examples/policy.json \
+  --calls examples/calls.json
+```
+
