@@ -46,3 +46,21 @@ python -m pi_guardrails check \
   --calls examples/calls.json
 ```
 
+Text report:
+
+```bash
+python -m pi_guardrails check \
+  --policy examples/policy.json \
+  --calls examples/calls.json \
+  --format text
+```
+
+Exit non-zero when any call is denied or requires approval:
+
+```bash
+python -m pi_guardrails check \
+  --policy examples/policy.json \
+  --calls examples/calls.json \
+  --fail-on-deny
+```
+
