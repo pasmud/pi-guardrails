@@ -64,3 +64,11 @@ python -m pi_guardrails check \
   --fail-on-deny
 ```
 
+### 3) Run the demo script
+
+```bash
+PYTHONPATH=src python examples/demo.py
+```
+
+## Policy format
+
