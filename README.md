@@ -72,3 +72,34 @@ PYTHONPATH=src python examples/demo.py
 
 ## Policy format
 
+Policies are JSON objects. See [`examples/policy.json`](examples/policy.json) for a full example.
+
+```json
+{
+  "version": 1,
+  "default_action": "deny",
+  "allowed_tools": ["search_docs", "read_file"],
+  "denied_tools": ["shell_exec"],
+  "require_approval_tools": ["send_email"],
+  "budget": {
+    "max_calls": 5,
+    "max_total_arg_chars": 2000,
+    "max_estimated_cost": 10,
+    "per_tool_max_calls": {"search_docs": 3}
+  },
+  "rules": [
+    {
+      "id": "allow-read-docs",
+      "tools": ["read_file"],
+      "action": "allow",
+      "reason": "read_file is limited to docs/",
+      "when": {
+        "arg_matches": {"path": "^docs/[A-Za-z0-9_./-]+$"}
+      }
+    }
+  ]
+}
+```
+
+### Top-level fields
+
