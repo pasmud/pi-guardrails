@@ -103,3 +103,31 @@ Policies are JSON objects. See [`examples/policy.json`](examples/policy.json) fo
 
 ### Top-level fields
 
+| Field | Type | Description |
+|---|---|---|
+| `version` | int | Policy schema version (positive integer). |
+| `default_action` | string | `allow`, `deny`, or `require_approval` when no stronger decision applies. |
+| `allowed_tools` | list[str] | Tool names/globs explicitly allowed by list. |
+| `denied_tools` | list[str] | Tool names/globs explicitly denied by list. |
+| `require_approval_tools` | list[str] | Tool names/globs requiring approval by list. |
+| `budget` | object | Session budget limits. |
+| `rules` | list[object] | Ordered rule definitions; matching rules influence decision by action severity. |
+
+### Rule `when` conditions
+
+All conditions present in a rule must match (logical AND).
+
+| Key | Value | Meaning |
+|---|---|---|
+| `arg_equals` | object | Dotted arg path equals scalar value. |
+| `arg_contains` | object | Dotted arg path string contains substring. |
+| `arg_matches` | object | Dotted arg path string matches regex. |
+| `arg_exists` | list[str] | Dotted arg paths must exist. |
+| `arg_missing` | list[str] | Dotted arg paths must be absent. |
+| `actor_equals` | string | Call actor equals value. |
+| `actor_in` | list[str] | Call actor is in list. |
+| `intent_contains` | string | Intent contains substring. |
+| `intent_matches` | string | Intent matches regex. |
+| `estimated_cost_gte` | int | Call estimated cost >= value. |
+| `estimated_cost_lte` | int | Call estimated cost <= value. |
+
