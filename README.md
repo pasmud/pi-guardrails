@@ -131,3 +131,18 @@ All conditions present in a rule must match (logical AND).
 | `estimated_cost_gte` | int | Call estimated cost >= value. |
 | `estimated_cost_lte` | int | Call estimated cost <= value. |
 
+Dotted arg paths support object keys and list indices, e.g. `config.method`, `items[0].name`.
+
+## Tool call format
+
+A call file may be a single tool call object, a JSON array of calls, or an object with a `calls` array.
+
+```json
+{
+  "calls": [
+    {"tool": "search_docs", "args": {"query": "guardrails"}, "estimated_cost": 1},
+    {"tool": "read_file", "args": {"path": "docs/guide.md"}}
+  ]
+}
+```
+
