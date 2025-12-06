@@ -146,3 +146,14 @@ A call file may be a single tool call object, a JSON array of calls, or an objec
 }
 ```
 
+Call fields:
+
+- `tool` / `name` (required): tool name.
+- `args` / `arguments` (optional): object payload passed to the tool.
+- `call_id` / `id` (optional): caller-supplied identifier.
+- `actor` (optional): actor identity used by policy conditions.
+- `intent` (optional): intent text used by policy conditions.
+- `estimated_cost` (optional): non-negative integer used by budget/cost rules.
+
+## Decision semantics
+
