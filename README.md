@@ -157,3 +157,12 @@ Call fields:
 
 ## Decision semantics
 
+The engine evaluates each call in this order:
+
+1. **Explicit tool lists**: `denied_tools` and `require_approval_tools` set an initial action; `allowed_tools` is used as an allow-list signal.
+2. **Rules**: every matching rule is recorded. The most restrictive action among matches wins (`deny` > `require_approval` > `allow`).
+3. **Budget checks**: projected usage is checked. Any budget violation forces `deny`.
+4. **Budget consumption**: only `allow` decisions consume budget. Denied and approval-required calls do not consume budget.
+
+Reports include decision action, reasons, violations, matched rule IDs, and a session budget snapshot.
+
