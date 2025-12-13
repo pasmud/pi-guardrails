@@ -180,3 +180,19 @@ The engine is stateful per instance (`GuardrailEngine`) so batch evaluation can 
 
 ## Library usage
 
+```python
+from pi_guardrails import GuardrailEngine, load_policy
+
+policy = load_policy("examples/policy.json")
+engine = GuardrailEngine(policy)
+
+decision = engine.evaluate({"tool": "read_file", "args": {"path": "docs/guide.md"}})
+print(decision.action.value, decision.reasons)
+
+report = engine.evaluate_many([
+    {"tool": "search_docs", "args": {"query": "pi"}, "estimated_cost": 1},
+    {"tool": "shell_exec", "args": {"cmd": "ls"}},
+])
+print(report.to_dict()["summary"])
+```
+
