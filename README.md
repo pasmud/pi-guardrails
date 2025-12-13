@@ -166,3 +166,17 @@ The engine evaluates each call in this order:
 
 Reports include decision action, reasons, violations, matched rule IDs, and a session budget snapshot.
 
+## Architecture
+
+```
+pi_guardrails/
+  models.py   - dataclasses/enums: Policy, Rule, Budget, ToolCall, Decision, Report
+  policy.py   - policy loading, JSON parsing, structural + semantic validation
+  engine.py   - evaluation engine, rule matching, budget accounting
+  cli.py      - argparse CLI: check, validate-policy
+```
+
+The engine is stateful per instance (`GuardrailEngine`) so batch evaluation can enforce session budgets across calls. Create a new engine or call `reset()` for a fresh budget session.
+
+## Library usage
+
