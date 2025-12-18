@@ -196,3 +196,11 @@ report = engine.evaluate_many([
 print(report.to_dict()["summary"])
 ```
 
+## Tests
+
+Run unit tests (offline, stdlib `unittest`):
+
+```bash
+PYTHONPATH=src python -m unittest discover -s tests -t . -v
+```
+
