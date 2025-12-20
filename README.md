@@ -204,3 +204,11 @@ Run unit tests (offline, stdlib `unittest`):
 PYTHONPATH=src python -m unittest discover -s tests -t . -v
 ```
 
+Or with pytest:
+
+```bash
+PYTHONPATH=src python -m pytest -q
+```
+
+## CI
+
