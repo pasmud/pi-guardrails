@@ -212,3 +212,16 @@ PYTHONPATH=src python -m pytest -q
 
 ## CI
 
+GitHub Actions workflow (`.github/workflows/ci.yml`) installs the package and runs the unittest suite on Python 3.10–3.13 for pushes and pull requests.
+
+## Limitations
+
+- **Not an execution sandbox**: the engine only returns decisions; the calling runtime must enforce them.
+- **Pattern matching is simple glob/regex**: it does not parse shell commands, SQL, URLs, or code semantics.
+- **Budget accounting is approximate**: argument size is measured as compact JSON length; `estimated_cost` is caller-provided.
+- **No persistent storage**: budget state is in-memory for the engine instance.
+- **No remote policy distribution**: policies are loaded from local dict/JSON/path inputs.
+- **Rule evaluation is deterministic but not a full policy language**: complex conditions should be expressed as explicit rules or handled by the runtime before/after guardrail evaluation.
+
+## License
+
