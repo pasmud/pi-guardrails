@@ -225,3 +225,4 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) installs the package and ru
 
 ## License
 
+MIT — see [LICENSE](LICENSE).
